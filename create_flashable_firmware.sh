@@ -32,7 +32,9 @@ show_progress(0.200000, 10);
 # $DATE - $HOSTNAME
 
 ui_print("Patching firmware images...");
-$(cat $1 | awk '/package_extract_file/ && /firmware-update\//')
+$(cat $1 | awk '/firmware-update/ && /modem/')
+$(cat $1 | awk '/firmware-update/ && /bluetooth/')
+$(cat $1 | awk '/firmware-update/ && /dsp/')
 show_progress(0.100000, 2);
 set_progress(1.000000);
 EOF
@@ -59,7 +61,7 @@ if [ ! -f /tmp/xiaomi-fw-zip-creator/unzipped/META-INF/com/google/android/update
 fi
 
 mkdir /tmp/xiaomi-fw-zip-creator/out/
-mv /tmp/xiaomi-fw-zip-creator/unzipped/firmware-update/ /tmp/xiaomi-fw-zip-creator/out/
+mv /tmp/xiaomi-fw-zip-creator/unzipped/firmware-update/dspso.bin /tmp/xiaomi-fw-zip-creator/unzipped/firmware-update/BTFM.bin /tmp/xiaomi-fw-zip-creator/unzipped/firmware-update/NON-HLOS.bin /tmp/xiaomi-fw-zip-creator/out/firmware-update/
 mkdir -p /tmp/xiaomi-fw-zip-creator/out/META-INF/com/google/android
 mv /tmp/xiaomi-fw-zip-creator/unzipped/META-INF/com/google/android/update-binary /tmp/xiaomi-fw-zip-creator/out/META-INF/com/google/android/
 codename=$(cat /tmp/xiaomi-fw-zip-creator/unzipped/META-INF/com/google/android/updater-script | grep -Po '\"[a-z]*\"' | cut -d '"' -f2 | head -1)
@@ -78,10 +80,10 @@ export version=$(echo $MIUI_ZIP_NAME | cut -d _ -f3)
 LASTLOC=$(pwd)
 cd /tmp/xiaomi-fw-zip-creator/out/
 echo "Creating firmware zip.. from $MIUI_ZIP_NAME"
-zip -q -r9 /tmp/xiaomi-fw-zip-creator/out/fw_$codename"_"$MIUI_ZIP_NAME META-INF/ firmware-update/
+zip -q -r9 /tmp/xiaomi-fw-zip-creator/out/fw_$codename"_"non-arb"_"$MIUI_ZIP_NAME META-INF/ firmware-update/
 
 cd $LASTLOC
-mv /tmp/xiaomi-fw-zip-creator/out/fw_$codename"_"$MIUI_ZIP_NAME $OUTPUT_DIR/
+mv /tmp/xiaomi-fw-zip-creator/out/fw_$codename"_"non-arb"_"$MIUI_ZIP_NAME $OUTPUT_DIR/
 mv /tmp/xiaomi-fw-zip-creator/out/changelog/$name.log $OUTPUT_DIR/changelog/$version/$name.log
 
 rm -rf /tmp/xiaomi-fw-zip-creator/
@@ -89,7 +91,7 @@ rm -rf /tmp/xiaomi-fw-zip-creator/
 md5sum *.zip > $OUTPUT_DIR/changelog/$version/$version.md5
 find . -type f -size 0b -delete
 
-if [ -f $OUTPUT_DIR/fw_$codename"_"$MIUI_ZIP_NAME ]; then
+if [ -f $OUTPUT_DIR/fw_$codename"_"non-arb"_"$MIUI_ZIP_NAME ]; then
     echo "All done!"
 else
     echo "Failed!"
