@@ -76,16 +76,16 @@ export version=$(echo $MIUI_ZIP_NAME | cut -d _ -f3)
 LASTLOC=$(pwd)
 cd /tmp/xiaomi-fw-zip-creator/out/
 echo "Creating firmware zip.. from $MIUI_ZIP_NAME"
-zip -q -r9 /tmp/xiaomi-fw-zip-creator/out/fw_$codename"_"non-arb"_"$MIUI_ZIP_NAME META-INF/ firmware-update/
+zip -q -r9 /tmp/xiaomi-fw-zip-creator/out/fw-non-arb_$codename"_"$MIUI_ZIP_NAME META-INF/ firmware-update/
 
 cd $LASTLOC
-mv /tmp/xiaomi-fw-zip-creator/out/fw_$codename"_"non-arb"_"$MIUI_ZIP_NAME $OUTPUT_DIR/
+mv /tmp/xiaomi-fw-zip-creator/out/fw-non-arb_$codename"_"$MIUI_ZIP_NAME $OUTPUT_DIR/
 
 rm -rf /tmp/xiaomi-fw-zip-creator/
 
 find . -type f -size 0b -delete
 
-if [ -f $OUTPUT_DIR/fw_$codename"_"non-arb"_"$MIUI_ZIP_NAME ]; then
+if [ -f $OUTPUT_DIR/fw-non-arb_$codename"_"$MIUI_ZIP_NAME ]; then
     echo "All done!"
 else
     echo "Failed!"
