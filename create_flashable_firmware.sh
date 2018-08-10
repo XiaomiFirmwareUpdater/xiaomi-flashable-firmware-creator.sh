@@ -60,7 +60,7 @@ if [ ! -f /tmp/xiaomi-fw-zip-creator/unzipped/META-INF/com/google/android/update
     exit 1
 fi
 
-mkdir /tmp/xiaomi-fw-zip-creator/out/
+mkdir -p /tmp/xiaomi-fw-zip-creator/out/firmware-update/
 mv /tmp/xiaomi-fw-zip-creator/unzipped/firmware-update/dspso.bin /tmp/xiaomi-fw-zip-creator/unzipped/firmware-update/BTFM.bin /tmp/xiaomi-fw-zip-creator/unzipped/firmware-update/NON-HLOS.bin /tmp/xiaomi-fw-zip-creator/out/firmware-update/
 mkdir -p /tmp/xiaomi-fw-zip-creator/out/META-INF/com/google/android
 mv /tmp/xiaomi-fw-zip-creator/unzipped/META-INF/com/google/android/update-binary /tmp/xiaomi-fw-zip-creator/out/META-INF/com/google/android/
@@ -69,12 +69,8 @@ echo "Generating updater-script for $codename.."
 
 creatupscrpt /tmp/xiaomi-fw-zip-creator/unzipped/META-INF/com/google/android/updater-script /tmp/xiaomi-fw-zip-creator/out/META-INF/com/google/android/updater-script
 
-echo "Generating changelog.."
 device=$(echo $MIUI_ZIP_NAME | cut -d _ -f2)
 export name=$codename-$device
-mkdir /tmp/xiaomi-fw-zip-creator/versioninfo && mkdir /tmp/xiaomi-fw-zip-creator/out/changelog/
-sudo mount -o loop /tmp/xiaomi-fw-zip-creator/out/firmware-update/NON-HLOS.bin /tmp/xiaomi-fw-zip-creator/versioninfo && cat /tmp/xiaomi-fw-zip-creator/versioninfo/verinfo/ver_info.txt | tr -d '"\n{}' | tr , '\n' | sed 's/^ *//' | sed 's/         /\n/g' > /tmp/xiaomi-fw-zip-creator/out/changelog/$name.log
-sudo umount /tmp/xiaomi-fw-zip-creator/versioninfo
 export version=$(echo $MIUI_ZIP_NAME | cut -d _ -f3)
 
 LASTLOC=$(pwd)
@@ -84,11 +80,9 @@ zip -q -r9 /tmp/xiaomi-fw-zip-creator/out/fw_$codename"_"non-arb"_"$MIUI_ZIP_NAM
 
 cd $LASTLOC
 mv /tmp/xiaomi-fw-zip-creator/out/fw_$codename"_"non-arb"_"$MIUI_ZIP_NAME $OUTPUT_DIR/
-mv /tmp/xiaomi-fw-zip-creator/out/changelog/$name.log $OUTPUT_DIR/changelog/$version/$name.log
 
 rm -rf /tmp/xiaomi-fw-zip-creator/
 
-md5sum *.zip > $OUTPUT_DIR/changelog/$version/$version.md5
 find . -type f -size 0b -delete
 
 if [ -f $OUTPUT_DIR/fw_$codename"_"non-arb"_"$MIUI_ZIP_NAME ]; then
